@@ -5,4 +5,5 @@ vim.cmd [[
   hi VertSplit guibg=NONE ctermbg=NONE
 ]]
 
-require("src.core.options")
+require("amir.core")
+require("amir.lazy")
