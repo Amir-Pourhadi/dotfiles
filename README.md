@@ -20,6 +20,7 @@ The repository includes configurations for:
 - Sway
 - Fuzzel
 - Dunst
+- Wallpaper automation
 - Ghostty
 - tmux
 - Zsh
@@ -36,8 +37,13 @@ dotfiles/
 ├── TODO.md
 ├── .chezmoiignore
 ├── docs/
-│   ├── PROJECT.md
-│   └── projects/
+│   └── PROJECT.md
+├── dot_config/
+│   ├── sway/
+│   ├── fuzzel/
+│   ├── dunst/
+│   └── ...
+├── private_dot_local/
 └── ...
 ```
 
@@ -59,8 +65,3 @@ conf update
 - `AGENTS.md` — Repository-wide AI instructions.
 - `TODO.md` — Project roadmap and pending work.
 - `docs/PROJECT.md` — Shared project context and architecture.
-- `docs/projects/` — Project-specific documentation.
-
----
-
-*This README will evolve as the configuration and repository structure are completed.*

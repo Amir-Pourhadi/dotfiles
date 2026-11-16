@@ -91,6 +91,10 @@ Prefer `2>&1 | tee >(wl-copy)` for diagnostic output when appropriate.
 
 Update documentation alongside meaningful configuration changes.
 
+Before each meaningful commit, review repository-wide documentation
+(`README.md`, `TODO.md`, and `docs/PROJECT.md`) and relevant project
+documentation for updates required by the changes.
+
 ## Source of Truth
 
 The actual current repository files take precedence over historical descriptions.

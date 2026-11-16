@@ -40,9 +40,8 @@ Main applications and tools include:
 - tmux
 - Neovim
 - Zsh
-- Walker
-- Mako
 - awww
+- Wallpaper automation (Wallhaven scripts and systemd user units)
 - NetworkManager applet
 - Blueman
 - cliphist
@@ -71,6 +70,7 @@ dotfiles/
 │   ├── sway/
 │   ├── fuzzel/
 │   ├── dunst/
+│   ├── systemd/
 │   ├── nvim/
 │   ├── ghostty/
 │   ├── tmux/
@@ -81,6 +81,11 @@ dotfiles/
 ```
 
 This is the intended architecture, not a claim that every directory already exists.
+
+Wallpaper automation is managed through:
+
+- `dot_config/systemd/user/` — Wallpaper service and timer.
+- `private_dot_local/bin/` — Wallpaper update and related utility scripts.
 
 ### Configuration Organization
 

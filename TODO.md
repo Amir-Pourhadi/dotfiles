@@ -15,9 +15,10 @@ Project roadmap for building and maintaining the dotfiles repository.
 
 ## 2. Configuration Projects
 
-- [ ] Fuzzel
-- [ ] Dunst
-- [ ] Sway
+- [x] Fuzzel
+- [x] Dunst
+- [x] Sway
+- [x] Wallpaper automation (scripts and systemd user units)
 - [ ] Neovim
 - [ ] Ghostty
 - [ ] tmux
