@@ -10,7 +10,7 @@ Project roadmap for building and maintaining the dotfiles repository.
 - [x] Add `.chezmoiignore`.
 - [x] Add `README.md`.
 - [x] Create shared project documentation.
-- [x] Establish the documentation hierarchy.
+- [x] Establish the repository architecture.
 - [ ] Configure and verify the GitHub remote.
 
 ## 2. Configuration Projects
