@@ -9,8 +9,8 @@ Project roadmap for building and maintaining the dotfiles repository.
 - [x] Add repository-wide `AGENTS.md`.
 - [x] Add `.chezmoiignore`.
 - [x] Add `README.md`.
-- [ ] Create shared project documentation.
-- [ ] Establish the final repository architecture.
+- [x] Create shared project documentation.
+- [x] Establish the documentation hierarchy.
 - [ ] Configure and verify the GitHub remote.
 
 ## 2. Configuration Projects
@@ -36,6 +36,5 @@ Project roadmap for building and maintaining the dotfiles repository.
 ## 4. Finalization
 
 - [ ] Review and update documentation.
-- [ ] Verify fresh-machine installation.
 - [ ] Remove obsolete local backup after successful verification.
 - [ ] Perform a final repository audit.
