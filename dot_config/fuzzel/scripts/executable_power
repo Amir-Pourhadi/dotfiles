@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+confirm() { [ "$(printf 'No\nYes\n' | fuzzel --dmenu --lines 2 --prompt "$1? ")" = "Yes" ]; }
+choice=$(printf '%s\n' Suspend Reboot Shutdown | fuzzel --dmenu --lines 3 --prompt "󰤆   ") || exit 0
+case "$choice" in
+  Suspend)  systemctl suspend ;;
+  Reboot)   confirm Reboot && systemctl reboot ;;
+  Shutdown) confirm Shutdown && systemctl poweroff ;;
+esac

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+while true; do
+  sel=$(cliphist list | fuzzel --dmenu --prompt "󰅍   " \
+    --mesg "Enter copy  ·  Ctrl+Enter delete  ·  Alt+Enter clear all")
+  case $? in
+    0)  [ -n "$sel" ] && printf '%s' "$sel" | cliphist decode | wl-copy; exit 0 ;;
+    10) [ -n "$sel" ] && printf '%s\n' "$sel" | cliphist delete ;;
+    11) [ "$(printf 'No\nYes\n' | fuzzel --dmenu --lines 2 --prompt 'Clear all? ')" = "Yes" ] && cliphist wipe
+        exit 0 ;;
+    *)  exit 0 ;;
+  esac
+done

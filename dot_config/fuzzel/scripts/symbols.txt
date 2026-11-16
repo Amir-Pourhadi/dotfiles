@@ -1,0 +1,30 @@
+→ arrow right
+← arrow left
+↑ arrow up
+↓ arrow down
+⇒ double arrow right
+⇔ double arrow both
+≠ not equal
+≤ less or equal
+≥ greater or equal
+≈ approximately
+± plus minus
+× multiply
+÷ divide
+° degree
+µ micro
+€ euro
+£ pound
+¥ yen
+₿ bitcoin
+© copyright
+™ trademark
+§ section
+… ellipsis
+• bullet
+✓ check mark
+✗ cross mark
+λ lambda
+π pi
+Ω omega
+∞ infinity

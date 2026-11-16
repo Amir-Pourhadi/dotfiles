@@ -1,0 +1,499 @@
+#!/usr/bin/env bash
+
+set -u
+
+db="$HOME/.local/bin/notif-db"
+prompt="󰂚   "
+
+# ---------------- [1] Fuzzel helpers ----------------
+
+valid_index() {
+  [[ "$1" =~ ^[0-9]+$ ]]
+}
+
+get_record() {
+  jq -c --argjson index "$1" '.[$index] // empty' <<< "$records"
+}
+
+# ---------------- [2] Generic application icon resolver ----------------
+
+notification_icon() {
+  local record="$1"
+  local icon desktop desktop_file app_dir file
+  local -a app_dirs=()
+
+  # Prefer the icon supplied directly by Dunst.
+  icon=$(jq -r '.icon_path // ""' <<< "$record")
+
+  if [[ -n "$icon" ]]; then
+    if [[ "$icon" == /* ]]; then
+      if [[ -f "$icon" ]]; then
+        printf '%s\n' "$icon"
+        return
+      fi
+    else
+      printf '%s\n' "$icon"
+      return
+    fi
+  fi
+
+  # Resolve the application's desktop entry.
+  desktop=$(jq -r '.desktop_entry // ""' <<< "$record")
+
+  if [[ -n "$desktop" ]]; then
+    desktop_file="${desktop##*/}"
+
+    [[ "$desktop_file" == *.desktop ]] ||
+      desktop_file="${desktop_file}.desktop"
+
+    app_dirs+=("$HOME/.local/share/applications")
+
+    if [[ -n "${XDG_DATA_HOME:-}" ]]; then
+      app_dirs+=("$XDG_DATA_HOME/applications")
+    fi
+
+    app_dirs+=(/usr/local/share/applications)
+    app_dirs+=(/usr/share/applications)
+
+    if [[ -n "${XDG_DATA_DIRS:-}" ]]; then
+      local old_ifs="$IFS"
+      local -a xdg_dirs=()
+
+      IFS=:
+      read -r -a xdg_dirs <<< "$XDG_DATA_DIRS"
+      IFS="$old_ifs"
+
+      for app_dir in "${xdg_dirs[@]}"; do
+        app_dirs+=("$app_dir/applications")
+      done
+    fi
+
+    for app_dir in "${app_dirs[@]}"; do
+      [[ -d "$app_dir" ]] || continue
+
+      file=$(find "$app_dir" -type f \
+        -name "$desktop_file" -print -quit 2>/dev/null)
+
+      [[ -n "$file" ]] || continue
+
+      icon=$(awk '
+        /^\[Desktop Entry\]/ {
+          section = 1
+          next
+        }
+
+        /^\[/ {
+          section = 0
+        }
+
+        section && /^Icon=/ {
+          sub(/^Icon=/, "")
+          print
+          exit
+        }
+      ' "$file")
+
+      if [[ -n "$icon" ]]; then
+        if [[ "$icon" != /* ]] || [[ -f "$icon" ]]; then
+          printf '%s\n' "$icon"
+          return
+        fi
+      fi
+    done
+  fi
+
+  # Generic fallback when no application icon is available.
+  printf '%s\n' "dialog-information"
+}
+
+# ---------------- [3] Notification content ----------------
+
+notification_text() {
+  jq -r '
+    def plain_text:
+      gsub("<[^>]*>"; "");
+
+    [
+      ((.summary // "") | plain_text),
+      ((.body // "") | plain_text),
+      (
+        (.urls // "")
+        | split("\n")
+        | map(select(length > 0))
+        | join("\n")
+      )
+    ]
+    | map(select(length > 0))
+    | join("\n\n")
+  ' <<< "$1"
+}
+
+notification_details() {
+  jq -r '
+    def plain_text:
+      gsub("<[^>]*>"; "");
+
+    def links:
+      (.urls // "")
+      | split("\n")
+      | map(select(length > 0));
+
+    links as $links |
+    [
+      ((.app_name // "Unknown") + "  ·  " + (.time_label // "Unknown time")),
+      (
+        if ((.urgency // "") | ascii_downcase) == "critical" then
+          "󰀦  CRITICAL"
+        else
+          ""
+        end
+      ),
+      "",
+      ((.summary // "") | plain_text),
+      "",
+      ((.body // "") | plain_text),
+      "",
+      (
+        if ($links | length) == 1 then
+          "󰌷  1 link"
+        elif ($links | length) > 1 then
+          "󰌷  " + ($links | length | tostring) + " links"
+        else
+          ""
+        end
+      )
+    ]
+    | map(select(. != ""))
+    | join("\n")
+  ' <<< "$1"
+}
+
+copy_notification() {
+  local content
+
+  content=$(notification_text "$1") || return 1
+  printf '%s' "$content" | wl-copy
+}
+
+# ---------------- [4] Archive actions ----------------
+
+delete_notification() {
+  local id
+
+  id=$(jq -r '.id' <<< "$1")
+  "$db" delete "$id"
+}
+
+clear_archive() {
+  local confirm status
+
+  confirm=$(printf 'No\nYes\n' |
+    fuzzel --dmenu --lines 2 --prompt "Clear archive? ")
+
+  status=$?
+
+  if (( status == 0 )) && [[ "$confirm" == "Yes" ]]; then
+    "$db" clear
+  fi
+}
+
+# ---------------- [5] Application focusing ----------------
+
+focus_notification() {
+  local app desktop windows count win_idx con_id status
+
+  app=$(jq -r '.app_name // ""' <<< "$1")
+  desktop=$(jq -r '.desktop_entry // ""' <<< "$1")
+
+  [[ -n "$app" || -n "$desktop" ]] || return 1
+
+  if ! windows=$(swaymsg -t get_tree -r 2>/dev/null | jq -c \
+    --arg app "$app" \
+    --arg desktop "$desktop" '
+    def norm:
+      ascii_downcase | gsub("[^a-z0-9]"; "");
+
+    def exact($target; $value):
+      ($target | norm) as $t |
+      ($value | norm) as $v |
+      $t != "" and $v != "" and $t == $v;
+
+    def fuzzy($target; $value):
+      ($target | norm) as $t |
+      ($value | norm) as $v |
+      $t != "" and
+      $v != "" and
+      ($t | length) >= 5 and
+      ($v | length) >= 5 and
+      (($t | contains($v)) or ($v | contains($t)));
+
+    [
+      .. | objects |
+      select(.type? == "con" and .id? != null) |
+      {
+        id,
+        app_id: (.app_id // ""),
+        class: (.window_properties.class // ""),
+        instance: (.window_properties.instance // ""),
+        title: (.name // "")
+      } |
+      (
+        if (
+          $desktop != "" and
+          (
+            .app_id == $desktop or
+            .class == $desktop or
+            .instance == $desktop
+          )
+        ) then 0
+        elif (
+          exact($desktop; .app_id) or
+          exact($desktop; .class) or
+          exact($desktop; .instance)
+        ) then 1
+        elif (
+          exact($app; .app_id) or
+          exact($app; .class) or
+          exact($app; .instance)
+        ) then 2
+        elif (
+          fuzzy($desktop; .app_id) or
+          fuzzy($desktop; .class) or
+          fuzzy($desktop; .instance)
+        ) then 3
+        elif (
+          fuzzy($app; .app_id) or
+          fuzzy($app; .class) or
+          fuzzy($app; .instance)
+        ) then 4
+        else 99
+        end
+      ) as $score |
+      select($score < 99) |
+      . + {score: $score}
+    ]
+    | if length == 0 then
+        []
+      else
+        (map(.score) | min) as $best |
+        map(select(.score == $best))
+      end
+  '); then
+    return 1
+  fi
+
+  count=$(jq 'length' <<< "$windows")
+  (( count > 0 )) || return 1
+
+  if (( count == 1 )); then
+    win_idx=0
+  else
+    mapfile -t win_labels < <(
+      jq -r '.[] |
+        "[\(.app_id // .class // .instance)] — \(.title)"
+      ' <<< "$windows"
+    )
+
+    win_idx=$(printf '%s\n' "${win_labels[@]}" |
+      fuzzel --dmenu --index --width 90 \
+        --prompt "󰖯   " \
+        --mesg "Choose a window to focus")
+
+    status=$?
+
+    (( status == 0 )) || return 1
+    valid_index "$win_idx" || return 1
+    (( win_idx < count )) || return 1
+  fi
+
+  con_id=$(jq -r ".[$win_idx].id" <<< "$windows")
+
+  swaymsg "[con_id=$con_id] focus" >/dev/null 2>&1
+}
+
+# ---------------- [6] Open notification ----------------
+
+open_notification() {
+  local record="$1"
+  local url url_idx status
+  local -a urls=()
+
+  while IFS= read -r url; do
+    case "$url" in
+      http://*|https://*|mailto:*)
+        urls+=("$url")
+        ;;
+    esac
+  done < <(
+    jq -r '.urls // "" | split("\n")[] | select(length > 0)' \
+      <<< "$record"
+  )
+
+  if (( ${#urls[@]} == 1 )); then
+    setsid -f xdg-open "${urls[0]}" >/dev/null 2>&1
+    return 0
+  fi
+
+  if (( ${#urls[@]} > 1 )); then
+    url_idx=$(printf '%s\n' "${urls[@]}" |
+      fuzzel --dmenu --index --width 90 \
+        --prompt "󰖟   " \
+        --mesg "Choose a URL to open")
+
+    status=$?
+
+    (( status == 0 )) || return 1
+    valid_index "$url_idx" || return 1
+    (( url_idx < ${#urls[@]} )) || return 1
+
+    setsid -f xdg-open "${urls[$url_idx]}" >/dev/null 2>&1
+    return 0
+  fi
+
+  focus_notification "$record"
+}
+
+# ---------------- [7] Notification list ----------------
+
+show_notification_list() {
+  local record label icon desktop cache_key
+  local -A icon_cache=()
+
+  while IFS= read -r record; do
+    label=$(jq -r '
+      def plain_text:
+        gsub("<[^>]*>"; "");
+
+      (.time_label // "Unknown") +
+      "  [" + (.urgency // "?") + "] " +
+      (.app_name // "Unknown") + " — " +
+      ((.summary // "") | plain_text | gsub("[\r\n\t]+"; " ")) +
+      " — " +
+      ((.body // "") | plain_text | gsub("[\r\n\t]+"; " ") | .[0:120])
+    ' <<< "$record")
+
+    desktop=$(jq -r '.desktop_entry // ""' <<< "$record")
+
+    # Empty desktop entries need a valid associative-array key.
+    cache_key="${desktop:-__no_desktop_entry__}"
+
+    # Resolve each desktop entry only once per list display.
+    if [[ -n "${icon_cache[$cache_key]+present}" ]]; then
+      icon="${icon_cache[$cache_key]}"
+    else
+      icon=$(notification_icon "$record")
+      icon_cache["$cache_key"]="$icon"
+    fi
+
+    printf '%s\0icon\x1f%s\n' "$label" "$icon"
+  done < <(jq -c '.[]' <<< "$records") |
+    fuzzel --dmenu --index --width 90 \
+      --prompt "$prompt" \
+      --mesg "Enter details  ·  Ctrl+C copy  ·  Ctrl+Enter delete  ·  Alt+Enter clear"
+}
+
+# ---------------- [8] Main notification history ----------------
+
+while true; do
+  if ! records=$("$db" list); then
+    exit 1
+  fi
+
+  # Exit quietly when the archive is empty.
+  if ! jq -e 'length > 0' <<< "$records" >/dev/null; then
+    exit 0
+  fi
+
+  idx=$(show_notification_list)
+  status=$?
+
+  # ---------------- [9] List keyboard actions ----------------
+
+  case "$status" in
+    10)
+      if valid_index "$idx"; then
+        record=$(get_record "$idx")
+
+        if [[ -n "$record" ]]; then
+          delete_notification "$record"
+        fi
+      fi
+
+      continue
+      ;;
+
+    11)
+      clear_archive
+      continue
+      ;;
+
+    12)
+      if valid_index "$idx"; then
+        record=$(get_record "$idx")
+
+        if [[ -n "$record" ]]; then
+          copy_notification "$record"
+        fi
+      fi
+
+      continue
+      ;;
+
+    0)
+      valid_index "$idx" || exit 0
+      record=$(get_record "$idx")
+      [[ -n "$record" ]] || continue
+      ;;
+
+    *)
+      exit 0
+      ;;
+  esac
+
+  # ---------------- [10] Notification details ----------------
+
+  while true; do
+    details=$(notification_details "$record")
+    icon=$(notification_icon "$record")
+
+    printf 'Open / focus\0icon\x1f%s\n' "$icon" |
+      fuzzel --dmenu --index --lines 1 --width 90 \
+        --prompt "$prompt" \
+        --mesg "$details" >/dev/null
+
+    detail_status=$?
+
+    # ---------------- [11] Detail keyboard actions ----------------
+
+    case "$detail_status" in
+      10)
+        delete_notification "$record"
+        break
+        ;;
+
+      11)
+        clear_archive
+        break
+        ;;
+
+      12)
+        copy_notification "$record"
+        continue
+        ;;
+
+      0)
+        if open_notification "$record"; then
+          exit 0
+        fi
+
+        # Keep details available if opening or focusing fails.
+        continue
+        ;;
+
+      *)
+        # Escape returns to the refreshed notification list.
+        break
+        ;;
+    esac
+  done
+done

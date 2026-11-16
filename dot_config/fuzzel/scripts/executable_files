@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+list=$(mktemp); trap 'rm -f "$list"' EXIT
+fd . "$HOME" --type f --follow --no-ignore \
+  --exclude node_modules --exclude __pycache__ --exclude .venv \
+  | sed "s|^$HOME/||" > "$list"
+idx=$(awk '{
+    n = split($0, p, "/"); name = p[n]
+    dir = substr($0, 1, length($0) - length(name) - 1)
+    if (dir == "") print name; else print name "  —  " dir
+  }' "$list" | fuzzel --dmenu --index --width 80 --prompt "󰈔   " \
+    --mesg "Enter open  ·  Ctrl+Enter folder  ·  Alt+Enter copy path")
+code=$?
+[ -z "$idx" ] && exit 0
+path="$HOME/$(sed -n "$((idx+1))p" "$list")"
+case $code in
+  0)  setsid -f xdg-open "$path" >/dev/null 2>&1 ;;
+  10) setsid -f thunar "$(dirname "$path")" >/dev/null 2>&1 ;;
+  11) printf '%s' "$path" | wl-copy; notify-send -t 1500 "Path copied" "$path" ;;
+esac

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+q=$(fuzzel --dmenu --lines 0 --prompt "󰊭   " </dev/null) || exit 0
+[ -z "$q" ] && exit 0
+enc=$(jq -rn --arg q "$q" '$q|@uri')
+setsid -f xdg-open "https://www.google.com/search?q=$enc" >/dev/null 2>&1

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Enter on a past result copies it. Shift+Enter evaluates what you typed.
+history=()
+while true; do
+  out=$(for h in "${history[@]}"; do printf '%s\n' "$h"; done | fuzzel --dmenu --prompt "   ") || exit 0
+  [ -z "$out" ] && continue
+  if printf '%s\n' "${history[@]}" | grep -qxF -- "$out"; then
+    printf '%s' "${out##* = }" | wl-copy
+    exit 0
+  fi
+  res=$(qalc -t "$out" 2>&1 | head -n1)
+  history=("$out = $res" "${history[@]}")
+done

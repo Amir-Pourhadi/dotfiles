@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+mapfile -t rows < <(swaymsg -t get_tree | jq -r '
+  .nodes[] | select(.type=="output") | .nodes[]
+  | select(.type=="workspace") as $ws
+  | $ws | [recurse(.nodes[]?, .floating_nodes[]?)] | .[]
+  | select(.pid != null)
+  | "\(.id)\t\($ws.name | sub("__i3_scratch"; "scratch"))\t\(.app_id // .window_properties.class // "?")\t\(.name // "")"')
+[ "${#rows[@]}" -eq 0 ] && exit 0
+idx=$(printf '%s\n' "${rows[@]}" \
+  | awk -F'\t' '{printf "[%s] %s — %s\n", $2, $3, $4}' \
+  | fuzzel --dmenu --index --prompt "󱂬   ") || exit 0
+[ -n "$idx" ] && swaymsg "[con_id=${rows[$idx]%%$'\t'*}] focus" >/dev/null
