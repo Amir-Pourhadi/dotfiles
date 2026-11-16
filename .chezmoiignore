@@ -1,0 +1,7 @@
+# ---------------- Repository Documentation ----------------
+
+# Ignore all Markdown files, including nested project documentation.
+**/*.md
+
+# Ignore the documentation directory and everything inside it.
+docs/
