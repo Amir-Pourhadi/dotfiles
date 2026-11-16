@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# ─────────────────────────────────────────────────────────────
+# 🌐 Load configuration
+# ─────────────────────────────────────────────────────────────
+source "$HOME/.config/wallhaven/config"
+source "$HOME/.config/wallhaven/env"
+
+# ─────────────────────────────────────────────────────────────
+# 📁 Wallpaper storage setup
+# ─────────────────────────────────────────────────────────────
+WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
+mkdir -p "$WALLPAPER_DIR"
+
+# ─────────────────────────────────────────────────────────────
+# 🔞 NSFW / SFW query selection
+# ─────────────────────────────────────────────────────────────
+QUERY=""
+
+if $NSFW; then
+  JSON=$(curl --fail --silent --show-error --proxy "$PROXY" \
+    "https://wallhaven.cc/api/v1/search?apikey=${API_KEY}&sorting=${SORTING}&categories=000&purity=001&atleast=${MIN_RESOLUTION}")
+else
+  QUERY="${CATEGORIES[RANDOM % ${#CATEGORIES[@]}]}"
+  QUERY="${QUERY// /+}"
+
+  JSON=$(curl --fail --silent --show-error --proxy "$PROXY" \
+    "https://wallhaven.cc/api/v1/search?apikey=${API_KEY}&sorting=${SORTING}&purity=100&categories=100&atleast=${MIN_RESOLUTION}&q=${QUERY}")
+fi
+
+# ─────────────────────────────────────────────────────────────
+# 🖼️ Extract random wallpaper URL
+# ─────────────────────────────────────────────────────────────
+URL=$(jq -r '.data[].path' <<< "$JSON" | shuf -n1)
+
+if [[ -z "$URL" || "$URL" == "null" ]]; then
+    echo "ERROR: No wallpapers found for query: $QUERY"
+    exit 1
+fi
+
+# ─────────────────────────────────────────────────────────────
+# 💾 Download wallpaper safely
+# ─────────────────────────────────────────────────────────────
+FILE="$WALLPAPER_DIR/current"
+TMP_DIR=$(mktemp -d)
+TMP_FILE="$TMP_DIR/wallpaper"
+ERROR_LOG=$(mktemp)
+
+if aria2c \
+  -x 8 -s 8 \
+  --all-proxy="$PROXY" \
+  --summary-interval=0 \
+  -d "$TMP_DIR" \
+  -o "wallpaper" \
+  "$URL" 2> "$ERROR_LOG"
+then
+  rm -f "$ERROR_LOG"
+else
+  notify-send "Wallpaper ❌ Error" "$(tail -n 5 "$ERROR_LOG")"
+  rm -rf "$TMP_DIR" "$ERROR_LOG"
+  exit 1
+fi
+
+# ─────────────────────────────────────────────────────────────
+# 🧪 Validate download
+# ─────────────────────────────────────────────────────────────
+if [[ ! -s "$TMP_FILE" ]]; then
+  echo "ERROR: Download failed or empty file"
+  rm -rf "$TMP_DIR"
+  exit 1
+fi
+
+mv "$TMP_FILE" "$WALLPAPER_DIR/current"
+
+# ─────────────────────────────────────────────────────────────
+# 🎨 Apply wallpaper with transition
+# ─────────────────────────────────────────────────────────────
+awww img "$FILE" --transition-type random --transition-duration 2

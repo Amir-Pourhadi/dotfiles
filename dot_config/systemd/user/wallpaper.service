@@ -1,0 +1,9 @@
+[Unit]
+Description=Download and apply wallpaper
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=%h/.config/wallhaven/env
+Type=oneshot
+ExecStart=%h/.local/bin/update-wallpaper

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -eu
+
+env_file="$HOME/.config/wallhaven/env"
+
+awww clear "000000"
+
+if grep -q '^NSFW=true$' "$env_file"; then
+  sed -i 's/^NSFW=true$/NSFW=false/' "$env_file"
+  state="disabled"
+else
+  sed -i 's/^NSFW=false$/NSFW=true/' "$env_file"
+  state="enabled"
+fi
+
+systemctl --user restart wallpaper.service
+
+notify-send "Wallpaper" "NSFW $state"

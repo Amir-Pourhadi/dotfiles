@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if systemctl is-active --quiet keyd; then
+  sudo systemctl stop keyd
+  notify-send "keyd" "Disabled"
+else
+  sudo systemctl start keyd
+  notify-send "keyd" "Enabled"
+fi
