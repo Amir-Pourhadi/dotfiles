@@ -18,7 +18,6 @@ The goal is a unified, minimal, maintainable configuration across terminal, edit
 - Zsh
 - Neovim
 - Waybar
-- awww
 - Other desktop utilities
 
 ## Configuration Philosophy
@@ -56,24 +55,44 @@ Do not use emoji icons in Neovim configuration.
 
 Do not use multiline decorative banners.
 
+## Documentation Hierarchy
+
+Documentation is organized by scope:
+
+- `README.md`: Human-facing repository overview.
+- `TODO.md`: Project roadmap and pending work.
+- `docs/PROJECT.md`: Shared technical context and architecture.
+- `dot_config/<project>/PROJECT.md`: Project-specific knowledge.
+- `dot_config/<project>/AGENTS.md`: Additional project-specific instructions when needed.
+
+Before substantial configuration changes:
+
+1. Read `docs/PROJECT.md` for shared context.
+2. Read the relevant project's `PROJECT.md`, if present.
+3. Follow any applicable nested `AGENTS.md` instructions.
+
+Avoid duplicating shared information in project-specific documentation.
+
 ## Workflow
 
 Before changing a configuration:
 
 1. Inspect the existing file and related modules.
 2. Identify dependencies.
-3. Preserve established conventions.
-4. Prefer complete, maintainable solutions.
-5. Verify the resulting configuration.
+3. Gather diagnostic evidence when needed.
+4. Explain meaningful architectural or behavioral changes before implementing them.
+5. Preserve established conventions.
+6. Prefer complete, maintainable solutions.
+7. Verify the resulting configuration when appropriate.
 
 For diagnostic commands, provide copy-pasteable commands and make output easy to share.
 
-Prefer `wl-copy` piping for diagnostic output when appropriate.
+Prefer `2>&1 | tee >(wl-copy)` for diagnostic output when appropriate.
+
+Update documentation alongside meaningful configuration changes.
 
 ## Source of Truth
 
 The actual current repository files take precedence over historical descriptions.
 
 Do not recreate configurations from memory when the current files can be inspected.
-
-Update documentation alongside meaningful configuration changes.
