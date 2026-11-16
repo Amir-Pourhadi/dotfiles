@@ -1,0 +1,121 @@
+#!/usr/bin/env python3
+"""Archive incoming Dunst notifications in a local SQLite database."""
+
+import os
+import re
+import sqlite3
+import sys
+from contextlib import closing
+from pathlib import Path
+
+# ---------------- Configuration ----------------
+
+DB_PATH = Path.home() / ".local/share/dunst/notifications.db"
+MAX_RECORDS = 2_000
+SQLITE_TIMEOUT = 10
+
+# ---------------- Notification filters ----------------
+
+IGNORED_SUMMARIES = re.compile(
+    r"^(?:Volume|Brightness):\s*\d+(?:\.\d+)?%?$",
+    re.IGNORECASE,
+)
+
+
+def notification_data() -> tuple[str, ...]:
+    """Read notification metadata supplied by Dunst's environment."""
+    fields = (
+        "ID",
+        "APP_NAME",
+        "DESKTOP_ENTRY",
+        "SUMMARY",
+        "BODY",
+        "URGENCY",
+        "CATEGORY",
+        "ICON_PATH",
+        "URLS",
+    )
+
+    return tuple(os.environ.get(f"DUNST_{field}", "") for field in fields)
+
+
+def should_archive(data: tuple[str, ...]) -> bool:
+    """Exclude volume and brightness OSD notifications from history."""
+    summary = data[3].strip()
+    return not IGNORED_SUMMARIES.fullmatch(summary)
+
+
+# ---------------- Database ----------------
+
+CREATE_TABLE = """
+    CREATE TABLE IF NOT EXISTS notifications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        received_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        dunst_id TEXT,
+        app_name TEXT,
+        desktop_entry TEXT,
+        summary TEXT,
+        body TEXT,
+        urgency TEXT,
+        category TEXT,
+        icon_path TEXT,
+        urls TEXT
+    )
+"""
+
+INSERT_NOTIFICATION = """
+    INSERT INTO notifications (
+        dunst_id,
+        app_name,
+        desktop_entry,
+        summary,
+        body,
+        urgency,
+        category,
+        icon_path,
+        urls
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+"""
+
+PRUNE_NOTIFICATIONS = """
+    DELETE FROM notifications
+    WHERE id NOT IN (
+        SELECT id
+        FROM notifications
+        ORDER BY id DESC
+        LIMIT ?
+    )
+"""
+
+
+def archive_notification() -> None:
+    """Archive eligible notifications and enforce the retention limit."""
+    data = notification_data()
+
+    # Ignore OSD notifications before touching the database.
+    if not should_archive(data):
+        return
+
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+    # Keep insertion and retention cleanup in one transaction.
+    with closing(sqlite3.connect(DB_PATH, timeout=SQLITE_TIMEOUT)) as connection:
+        with connection:
+            connection.execute(CREATE_TABLE)
+            connection.execute(INSERT_NOTIFICATION, data)
+            connection.execute(PRUNE_NOTIFICATIONS, (MAX_RECORDS,))
+
+
+def main() -> int:
+    try:
+        archive_notification()
+    except (OSError, sqlite3.Error) as error:
+        print(f"dunst-archive: {error}", file=sys.stderr)
+        return 1
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,90 @@
+[global]
+    monitor = 0
+    follow = mouse
+
+    width = (350, 500)
+    height = (80, 220)
+    origin = top-right
+    offset = (12, 12)
+
+    notification_limit = 5
+
+    progress_bar = true
+    progress_bar_height = 9
+    progress_bar_frame_width = 1
+    progress_bar_min_width = 318
+    progress_bar_max_width = 468
+    progress_bar_corner_radius = 5
+    progress_bar_corners = all
+    progress_bar_horizontal_alignment = center
+
+    indicate_hidden = yes
+    transparency = 0
+    separator_height = 2
+
+    padding = 12
+    horizontal_padding = 14
+    text_icon_padding = 12
+
+    frame_width = 2
+    frame_color = "#cba6f7"
+    gap_size = 8
+    separator_color = frame
+
+    sort = yes
+    font = "Inter 13"
+    markup = full
+    format = "<b>%s</b>\n%b"
+    alignment = left
+    vertical_alignment = center
+    ellipsize = middle
+
+    show_age_threshold = -1
+    ignore_newline = no
+    stack_duplicates = yes
+    hide_duplicate_count = no
+    show_indicators = yes
+
+    icon_position = left
+    min_icon_size = 32
+    max_icon_size = 64
+    icon_path = /usr/share/icons/AdwaitaLegacy/16x16/legacy,/usr/share/icons/AdwaitaLegacy/22x22/legacy,/usr/share/icons/AdwaitaLegacy/24x24/legacy,/usr/share/icons/AdwaitaLegacy/32x32/legacy,/usr/share/icons/AdwaitaLegacy/48x48/legacy,/usr/share/icons/Adwaita/symbolic/status,/usr/share/icons/hicolor
+
+    sticky_history = yes
+    history_length = 20
+
+    dmenu = /usr/bin/fuzzel --dmenu --prompt "Dunst: "
+    browser = /usr/bin/xdg-open
+
+    always_run_script = true
+    corner_radius = 12
+    ignore_dbusclose = false
+    force_xwayland = false
+
+    mouse_left_click = do_action
+    mouse_right_click = close_current
+    mouse_middle_click = close_all
+
+[urgency_low]
+    background = "#1e1e2e"
+    foreground = "#a6adc8"
+    frame_color = "#6c7086"
+    timeout = 5
+
+[urgency_normal]
+    background = "#1e1e2e"
+    foreground = "#cdd6f4"
+    frame_color = "#cba6f7"
+    timeout = 5
+
+[urgency_critical]
+    background = "#1e1e2e"
+    foreground = "#cdd6f4"
+    frame_color = "#f38ba8"
+    timeout = 0
+
+[notification_archive]
+    script = /home/amir/.local/bin/dunst-archive
+
+[experimental]
+    pause_on_mouse_over = true
