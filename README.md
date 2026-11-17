@@ -27,6 +27,7 @@ The repository includes configurations for:
 - Neovim
 - Waybar
 - keyd
+- GTK
 - Other desktop utilities
 
 ## Repository Structure

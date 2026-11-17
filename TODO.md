@@ -25,6 +25,7 @@ Project roadmap for building and maintaining the dotfiles repository.
 - [x] Zsh
 - [x] Waybar
 - [x] keyd
+- [x] GTK (GTK3 and GTK4)
 - [ ] Other desktop utilities
 
 ## 3. System Integration

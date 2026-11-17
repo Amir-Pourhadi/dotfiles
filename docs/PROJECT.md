@@ -6,18 +6,18 @@ This document describes the user's actual machine, configuration environment, re
 
 ## 1. System Environment
 
-| Component | Current Setup |
-|---|---|
+| Component        | Current Setup          |
+| ---------------- | ---------------------- |
 | Operating System | Fedora 45 Sway Edition |
-| Window Manager | Sway |
-| Display Server | Wayland |
-| Shell | Zsh |
-| Terminal | Ghostty |
-| Editor | Neovim |
-| Package Manager | DNF |
-| Dotfiles Manager | chezmoi |
-| Version Control | Git |
-| Main Theme | Catppuccin |
+| Window Manager   | Sway                   |
+| Display Server   | Wayland                |
+| Shell            | Zsh                    |
+| Terminal         | Ghostty                |
+| Editor           | Neovim                 |
+| Package Manager  | DNF                    |
+| Dotfiles Manager | chezmoi                |
+| Version Control  | Git                    |
+| Main Theme       | Catppuccin             |
 
 ### Hardware
 
@@ -48,6 +48,7 @@ Main applications and tools include:
 - cliphist
 - wl-clipboard
 - grim and slurp
+- GTK
 
 The actual installed configuration and dependencies take precedence over this overview.
 
@@ -174,12 +175,23 @@ Visual preferences:
 
 ### Fonts
 
-| Purpose | Font |
-|---|---|
-| UI | Inter |
-| Coding | Maple |
+| Purpose | Font  |
+| ------- | ----- |
+| UI      | Inter |
+| Coding  | Maple |
 
 Avoid fonts previously found unsuitable, such as JetBrains Mono and excessively thin or short-looking alternatives.
+
+### GTK Appearance
+
+| Setting      | Choice                                  |
+| ------------ | --------------------------------------- |
+| GTK theme    | Catppuccin Mocha Mauve Standard+Default |
+| GTK font     | Inter 11                                |
+| Cursor theme | Bibata Modern Ice                       |
+| Icon theme   | Papirus-Dark                            |
+
+GTK3 and GTK4 settings are managed through chezmoi. GTK4 theme CSS and assets remain symlinks to the locally installed Catppuccin theme.
 
 ## 6. Formatting Conventions
 
@@ -231,14 +243,14 @@ refactor(nvim): simplify plugin configuration
 
 Documentation is organized by scope.
 
-| File | Responsibility |
-|---|---|
-| Root `AGENTS.md` | Repository-wide AI instructions |
-| Root `README.md` | Human-facing repository overview |
-| Root `TODO.md` | Project roadmap |
-| `docs/PROJECT.md` | Shared technical context |
-| `dot_config/<project>/PROJECT.md` | Project-specific technical knowledge |
-| `dot_config/<project>/AGENTS.md` | Additional project-specific AI instructions |
+| File                              | Responsibility                              |
+| --------------------------------- | ------------------------------------------- |
+| Root `AGENTS.md`                  | Repository-wide AI instructions             |
+| Root `README.md`                  | Human-facing repository overview            |
+| Root `TODO.md`                    | Project roadmap                             |
+| `docs/PROJECT.md`                 | Shared technical context                    |
+| `dot_config/<project>/PROJECT.md` | Project-specific technical knowledge        |
+| `dot_config/<project>/AGENTS.md`  | Additional project-specific AI instructions |
 
 Root instructions apply throughout the repository.
 
