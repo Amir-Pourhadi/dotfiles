@@ -21,7 +21,7 @@ Project roadmap for building and maintaining the dotfiles repository.
 - [x] Wallpaper automation (scripts and systemd user units)
 - [x] Neovim
 - [x] Ghostty
-- [ ] tmux
+- [x] tmux
 - [ ] Zsh
 - [ ] Waybar
 - [ ] Other desktop utilities
