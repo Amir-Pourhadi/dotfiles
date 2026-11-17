@@ -26,6 +26,7 @@ The repository includes configurations for:
 - Zsh
 - Neovim
 - Waybar
+- keyd
 - Other desktop utilities
 
 ## Repository Structure

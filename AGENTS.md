@@ -18,6 +18,7 @@ The goal is a unified, minimal, maintainable configuration across terminal, edit
 - Zsh
 - Neovim
 - Waybar
+- keyd
 - Other desktop utilities
 
 ## Configuration Philosophy

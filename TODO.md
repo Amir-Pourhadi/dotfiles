@@ -24,6 +24,7 @@ Project roadmap for building and maintaining the dotfiles repository.
 - [x] tmux
 - [x] Zsh
 - [x] Waybar
+- [x] keyd
 - [ ] Other desktop utilities
 
 ## 3. System Integration

@@ -36,6 +36,7 @@ Main applications and tools include:
 - Fuzzel
 - Dunst
 - Waybar
+- keyd
 - Ghostty
 - tmux
 - Neovim
@@ -75,6 +76,7 @@ dotfiles/
 │   ├── ghostty/
 │   ├── tmux/
 │   ├── waybar/
+│   ├── keyd/
 │   └── ...
 │
 └── ...
