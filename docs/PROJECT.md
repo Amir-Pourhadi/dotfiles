@@ -87,6 +87,7 @@ This is the intended architecture, not a claim that every directory already exis
 
 Wallpaper automation is managed through:
 
+- Wallpaper updates run only when the configured local proxy is reachable; otherwise, systemd skips the service execution.
 - `dot_config/systemd/user/` — Wallpaper service and timer.
 - `private_dot_local/bin/` — Wallpaper update and related utility scripts.
 

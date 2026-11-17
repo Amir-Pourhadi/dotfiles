@@ -6,4 +6,9 @@ Wants=network-online.target
 [Service]
 EnvironmentFile=%h/.config/wallhaven/env
 Type=oneshot
+
+# Skip the update when the proxy is unavailable.
+ExecCondition=/usr/bin/test -n "${PROXY}"
+ExecCondition=/usr/bin/curl --silent --show-error --fail --connect-timeout=3 --max-time=8 --proxy=${PROXY} --output=/dev/null https://wallhaven.cc/
+
 ExecStart=%h/.local/bin/update-wallpaper
