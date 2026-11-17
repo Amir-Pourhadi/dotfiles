@@ -1,0 +1,55 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 32,
+  "modules-left": [
+    "sway/workspaces",
+    "sway/mode"
+  ],
+  "modules-center": [
+    "sway/window"
+  ],
+  "modules-right": [
+    "tray",
+    "clock"
+  ],
+  "sway/workspaces": {
+    "persistent-workspaces": {
+      "1: Web": {},
+      "2: Terminal": {},
+      "3: Code": {},
+      "4: Files": {},
+      "5: Chat": {},
+      "6: Media": {},
+      "7: Games": {},
+      "8: Tools": {},
+      "9: Scratch": {}
+    },
+    "format": "{icon}",
+    "disable-scroll": true,
+    "format-icons": {
+      "1: Web": "",
+      "2: Terminal": "",
+      "3: Code": "󰨞",
+      "4: Files": "",
+      "5: Chat": "",
+      "6: Media": "",
+      "7: Games": "",
+      "8: Tools": "󱁤",
+      "9: Scratch": "󰎞"
+    }
+  },
+  "sway/window": {
+    "max-length": 60,
+    "separate-outputs": false,
+    "empty-text": ""
+  },
+  "clock": {
+    "format": "{:%H:%M}",
+    "tooltip-format": "{:%A, %B %d, %Y}"
+  },
+  "tray": {
+    "icon-size": 20,
+    "spacing": 8
+  }
+}

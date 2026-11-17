@@ -1,0 +1,84 @@
+window#waybar {
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.88);
+}
+
+#workspaces button {
+  all: unset;
+  min-height: 16px;
+  min-width: 18px;
+  padding: 0 6px;
+  margin: 2px;
+  color: #444;
+  transition: all 350ms ease;
+  font-family: "Maple Mono NF";
+  font-size: 20px;
+}
+
+#workspaces button.urgent {
+  color: #ff5555;
+}
+
+#workspaces button:nth-child(1).focused {
+  color: #ff5f56;
+}
+#workspaces button:nth-child(2).focused {
+  color: #50fa7b;
+}
+#workspaces button:nth-child(3).focused {
+  color: #61afef;
+}
+#workspaces button:nth-child(4).focused {
+  color: #ffd166;
+}
+#workspaces button:nth-child(5).focused {
+  color: #bd93f9;
+}
+#workspaces button:nth-child(6).focused {
+  color: #00e5ff;
+}
+#workspaces button:nth-child(7).focused {
+  color: #ff79c6;
+}
+#workspaces button:nth-child(8).focused {
+  color: #4fd6be;
+}
+#workspaces button:nth-child(9).focused {
+  color: #f8f8f2;
+}
+
+#mode {
+  padding: 0 10px;
+  font-family: "Maple Mono NF";
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#window {
+  color: #888888;
+  font-family: "Inter", "Vazir Matn";
+  font-size: 19.5px;
+  font-weight: 600;
+}
+
+#bluetooth,
+#network {
+  font-size: 20px;
+}
+
+#tray {
+  padding: 0 10px;
+}
+
+#clock {
+  padding: 0 5px;
+  font-weight: 600;
+  font-family: "Maple Mono NF";
+  font-size: 20px;
+}
+
+tooltip {
+  background: rgba(30, 30, 30, 0.95);
+  border-radius: 10px;
+  padding: 8px;
+}

@@ -23,7 +23,7 @@ Project roadmap for building and maintaining the dotfiles repository.
 - [x] Ghostty
 - [x] tmux
 - [x] Zsh
-- [ ] Waybar
+- [x] Waybar
 - [ ] Other desktop utilities
 
 ## 3. System Integration
