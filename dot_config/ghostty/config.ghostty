@@ -1,0 +1,22 @@
+#─── 🚀 Startup ───────────────────────────
+command = tmux new-session -A -s Fedora
+
+#─── ❌ Window ────────────────────────────
+window-decoration = false
+confirm-close-surface = false
+window-save-state = never
+gtk-titlebar = false
+
+#─── 🎨 Theme ─────────────────────────────
+theme = Catppuccin Mocha
+
+#─── 🔤 Font ──────────────────────────────
+font-family = Maple Mono NF
+font-size = 16.85
+
+#─── 🌄 Background ────────────────────────
+background = black
+background-opacity = 0.88
+
+#─── 🧱 Padding ───────────────────────────
+window-padding-balance = true
