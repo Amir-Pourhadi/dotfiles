@@ -22,7 +22,7 @@ Project roadmap for building and maintaining the dotfiles repository.
 - [x] Neovim
 - [x] Ghostty
 - [x] tmux
-- [ ] Zsh
+- [x] Zsh
 - [ ] Waybar
 - [ ] Other desktop utilities
 
