@@ -28,6 +28,7 @@ The repository includes configurations for:
 - Waybar
 - keyd
 - GTK
+- aria2
 - Other desktop utilities
 
 ## Repository Structure
