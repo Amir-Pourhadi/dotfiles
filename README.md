@@ -38,9 +38,8 @@ dotfiles/
 ├── AGENTS.md
 ├── README.md
 ├── TODO.md
+├── PROJECT.md
 ├── .chezmoiignore
-├── docs/
-│   └── PROJECT.md
 ├── dot_config/
 │   ├── sway/
 │   ├── fuzzel/
@@ -67,4 +66,4 @@ conf update
 
 - `AGENTS.md` — Repository-wide AI instructions.
 - `TODO.md` — Project roadmap and pending work.
-- `docs/PROJECT.md` — Shared project context and architecture.
+- `PROJECT.md` — Shared project context and architecture.

@@ -64,9 +64,7 @@ dotfiles/
 ├── AGENTS.md
 ├── README.md
 ├── TODO.md
-│
-├── docs/
-│   └── PROJECT.md
+├── PROJECT.md
 │
 ├── dot_config/
 │   ├── sway/
@@ -128,7 +126,6 @@ The source directory is explicitly configured in `chezmoi.toml`.
 The root `.chezmoiignore` excludes:
 
 - Markdown files recursively.
-- The `docs/` directory.
 
 Repository documentation remains available to Git and AI agents but is not deployed into the home directory by chezmoi.
 
@@ -250,7 +247,7 @@ Documentation is organized by scope.
 | Root `AGENTS.md`                  | Repository-wide AI instructions             |
 | Root `README.md`                  | Human-facing repository overview            |
 | Root `TODO.md`                    | Project roadmap                             |
-| `docs/PROJECT.md`                 | Shared technical context                    |
+| `PROJECT.md`                      | Shared technical context                    |
 | `dot_config/<project>/PROJECT.md` | Project-specific technical knowledge        |
 | `dot_config/<project>/AGENTS.md`  | Additional project-specific AI instructions |
 

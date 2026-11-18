@@ -140,6 +140,6 @@ Preserve existing behavior unless a change is intentional.
 ## 8. Documentation
 
 - Root `AGENTS.md`: Repository-wide instructions.
-- Root `docs/PROJECT.md`: Shared system and repository context.
+- Root `PROJECT.md`: Shared system and repository context.
 - This file: Fuzzel-specific technical context.
 - This directory's `AGENTS.md`: Fuzzel-specific development rules.

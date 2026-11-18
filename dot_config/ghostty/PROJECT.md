@@ -95,6 +95,6 @@ Do not apply changes blindly. Verify the effective configuration and actual term
 ## 8. Documentation
 
 - Root `AGENTS.md`: Repository-wide instructions.
-- Root `docs/PROJECT.md`: Shared system and repository context.
+- Root `PROJECT.md`: Shared system and repository context.
 - This file: Ghostty-specific technical context.
 - This directory's `AGENTS.md`: Ghostty-specific development rules.

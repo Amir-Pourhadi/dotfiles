@@ -62,13 +62,13 @@ Documentation is organized by scope:
 
 - `README.md`: Human-facing repository overview.
 - `TODO.md`: Project roadmap and pending work.
-- `docs/PROJECT.md`: Shared technical context and architecture.
+- `PROJECT.md`: Shared technical context and architecture.
 - `dot_config/<project>/PROJECT.md`: Project-specific knowledge.
 - `dot_config/<project>/AGENTS.md`: Additional project-specific instructions when needed.
 
 Before substantial configuration changes:
 
-1. Read `docs/PROJECT.md` for shared context.
+1. Read `PROJECT.md` for shared context.
 2. Read the relevant project's `PROJECT.md`, if present.
 3. Follow any applicable nested `AGENTS.md` instructions.
 
@@ -93,7 +93,7 @@ Prefer `2>&1 | tee >(wl-copy)` for diagnostic output when appropriate.
 Update documentation alongside meaningful configuration changes.
 
 Before each meaningful commit, review repository-wide documentation
-(`README.md`, `TODO.md`, and `docs/PROJECT.md`) and relevant project
+(`README.md`, `TODO.md`, and `PROJECT.md`) and relevant project
 documentation for updates required by the changes.
 
 ## Source of Truth

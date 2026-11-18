@@ -100,6 +100,6 @@ The actual installed commands and configuration take precedence over this overvi
 ## 7. Documentation
 
 - Root `AGENTS.md`: Repository-wide instructions.
-- Root `docs/PROJECT.md`: Shared system and repository context.
+- Root `PROJECT.md`: Shared system and repository context.
 - This file: Dunst-specific technical context.
 - This directory's `AGENTS.md`: Dunst-specific development rules.
