@@ -27,18 +27,17 @@ Project roadmap for building and maintaining the dotfiles repository.
 - [x] keyd
 - [x] GTK (GTK3 and GTK4)
 - [x] aria2
-- [ ] Other desktop utilities
 
 ## 3. System Integration
 
-- [ ] Review configuration dependencies.
-- [ ] Review autostart and service integration.
-- [ ] Verify configuration compatibility.
-- [ ] Test chezmoi deployment.
-- [ ] Review backup and recovery procedures.
+- [x] Review configuration dependencies.
+- [x] Review autostart and service integration.
+- [x] Verify configuration compatibility.
+- [x] Test chezmoi deployment.
+- [x] Review backup and recovery procedures.
 
 ## 4. Finalization
 
-- [ ] Review and update documentation.
-- [ ] Remove obsolete local backup after successful verification.
-- [ ] Perform a final repository audit.
+- [x] Review and update documentation.
+- [x] Remove obsolete local backup after successful verification.
+- [x] Perform a final repository audit.
